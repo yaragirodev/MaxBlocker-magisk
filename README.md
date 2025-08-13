@@ -1,5 +1,4 @@
-# MaxBlocker-magisk
-
+# <img align="right" src="/Web/static/img/logo_shadow.png" alt="logo" title="blockker" width="15%">MaxBlockker
 Модуль для блокировки приложения MAX (ru.oneme.app)
 
 ### Что делает модуль?
