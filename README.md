@@ -1,4 +1,4 @@
-# <img align="right" src="/Web/static/img/logo_shadow.png" alt="logo" title="blockker" width="15%">MaxBlockker
+# <img align="right" src="/repo-files/blockker_logo.png" alt="logo" title="blockker" width="15%">MaxBlockker
 Модуль для блокировки приложения MAX (ru.oneme.app)
 
 ### Что делает модуль?
