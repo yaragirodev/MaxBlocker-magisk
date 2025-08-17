@@ -1,6 +1,6 @@
 id=max_gfy
-name=NOMAX
+name=MaxBlockker
 version=v1.0
 versionCode=1
 author=yaragirodev/v0.dev
-description=Блокирует запуск приложения MAX (ru.oneme.app) для защиты приватности
+description=Блокирует недомессенджер MAX (ru.oneme.app)
