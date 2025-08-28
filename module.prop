@@ -1,6 +1,6 @@
 id=max_block
 name=MaxBlockker
-version=v1.0
-versionCode=2
+version=v1.3
+versionCode=3
 author=yaragirodev/v0.dev
-description=Блокирует недомессенджер MAX (ru.oneme.app)
+description=Блокирует недомессенджер MAX (ru.oneme.app) и его сайт.
