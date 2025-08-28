@@ -10,13 +10,11 @@ log() {
   echo "[MBv1.2-siteblock] $1" > /dev/kmsg 2>/dev/null || log -t MBv1.2-siteblock "$1"
 }
 
-# Wait for /system to be ready (simple backoff)
 for i in 1 2 3 4 5; do
   [ -e "$TARGET" ] && break
   sleep 1
 done
 
-# Create our hosts based on current one if possible
 if [ ! -f "$OURHOSTS" ]; then
   if [ -r "$TARGET" ]; then
     cp -f "$TARGET" "$OURHOSTS"
@@ -31,7 +29,6 @@ EOF
   fi
 fi
 
-# Ensure entries for max.ru
 ensure_entry() {
   DOMAIN="$1"
   if ! grep -qE "^[[:space:]]*127\.0\.0\.1[[:space:]]+$DOMAIN(\s|$)" "$OURHOSTS" 2>/dev/null; then
@@ -45,8 +42,6 @@ ensure_entry() {
 ensure_entry "max.ru"
 ensure_entry "www.max.ru"
 
-# Bind mount over system hosts
-# Remount if already mounted by someone else
 mountpoint=""
 mountpoint=$(toybox mount | grep " $TARGET " || true)
 if [ -n "$mountpoint" ]; then
