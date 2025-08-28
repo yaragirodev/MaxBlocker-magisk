@@ -2,6 +2,6 @@ id=max_block
 name=MaxBlockker
 version=v1.3
 versionCode=3
-author=yaragirodev/v0.dev
+author=yaragirodev/v0.dev/ChatGPT
 description=Блокирует недомессенджер MAX (ru.oneme.app) и его сайт.
 updateJson=https://raw.githubusercontent.com/yaragirodev/MaxBlocker-magisk/refs/heads/main/update.json
