@@ -1,32 +1,60 @@
 #!/system/bin/sh
+# Magisk service script: bind-mount a custom hosts file to block max.ru
+# Runs at boot (late_start service mode).
 
-# Ждем загрузки системы
-sleep 30
+MODDIR="${0%/*}"
+TARGET="/system/etc/hosts"
+OURHOSTS="$MODDIR/hosts"
 
-# Функция для удаления приложения
-remove_max_app() {
-    # Останавливаем приложение если оно запущено
-    am force-stop ru.oneme.app 2>/dev/null
-    
-    # Пробуем удалить полностью (root)
-    if su -c "pm uninstall ru.oneme.app" >/dev/null 2>&1; then
-        echo "$(date): MAX app fully removed (root)" >> /data/local/tmp/max_blocker.log
-    else
-        # Если root нет — удаляем только для текущего пользователя
-        pm uninstall --user 0 ru.oneme.app 2>/dev/null
-        echo "$(date): MAX app removed for user 0" >> /data/local/tmp/max_blocker.log
-    fi
+log() {
+  echo "[MBv1.2-siteblock] $1" > /dev/kmsg 2>/dev/null || log -t MBv1.2-siteblock "$1"
 }
 
-# Проверяем наличие приложения и удаляем его
-if pm list packages | grep -q "ru.oneme.app"; then
-    remove_max_app
+# Wait for /system to be ready (simple backoff)
+for i in 1 2 3 4 5; do
+  [ -e "$TARGET" ] && break
+  sleep 1
+done
+
+# Create our hosts based on current one if possible
+if [ ! -f "$OURHOSTS" ]; then
+  if [ -r "$TARGET" ]; then
+    cp -f "$TARGET" "$OURHOSTS"
+  else
+    # Minimal hosts baseline
+    cat > "$OURHOSTS" <<'EOF'
+127.0.0.1 localhost
+::1 localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+EOF
+  fi
 fi
 
-# Мониторим каждые 10 секунд
-while true; do
-    sleep 10
-    if pm list packages | grep -q "ru.oneme.app"; then
-        remove_max_app
-    fi
-done &
+# Ensure entries for max.ru
+ensure_entry() {
+  DOMAIN="$1"
+  if ! grep -qE "^[[:space:]]*127\.0\.0\.1[[:space:]]+$DOMAIN(\s|$)" "$OURHOSTS" 2>/dev/null; then
+    printf "\n127.0.0.1\t%s\n" "$DOMAIN" >> "$OURHOSTS"
+  fi
+  if ! grep -qE "^[[:space:]]*::1[[:space:]]+$DOMAIN(\s|$)" "$OURHOSTS" 2>/dev/null; then
+    printf "::1\t%s\n" "$DOMAIN" >> "$OURHOSTS"
+  fi
+}
+
+ensure_entry "max.ru"
+ensure_entry "www.max.ru"
+
+# Bind mount over system hosts
+# Remount if already mounted by someone else
+mountpoint=""
+mountpoint=$(toybox mount | grep " $TARGET " || true)
+if [ -n "$mountpoint" ]; then
+  # Attempt to unmount any previous bind to avoid stacking
+  umount -l "$TARGET" 2>/dev/null
+fi
+
+mount -o bind "$OURHOSTS" "$TARGET" && log "Bound custom hosts to $TARGET"
+chmod 644 "$OURHOSTS" 2>/dev/null
+
+exit 0
