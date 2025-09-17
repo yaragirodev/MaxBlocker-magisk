@@ -1,6 +1,7 @@
 # <img align="right" src="/repo-files/blockker_logo.png" alt="logo" title="blockker" width="15%">MaxBlockker
 Модуль для блокировки приложения MAX (ru.oneme.app)
 
+### beta ветка 
 ### Что делает модуль?
 - При первом же запуске MAX, он блокируется, после чего удаляется.
 
