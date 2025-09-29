@@ -42,6 +42,9 @@ ensure_entry() {
 ensure_entry "max.ru"
 ensure_entry "www.max.ru"
 ensure_entry "download.max.ru"
+ensure_entry "web.max.ru"
+ensure_entry "help.max.ru"
+ensure_entry "dev.max.ru"
 
 mountpoint=""
 mountpoint=$(toybox mount | grep " $TARGET " || true)
